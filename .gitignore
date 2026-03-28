@@ -1,0 +1,13 @@
+#folders
+node_modules/
+dhparam/
+test/
+build/
+
+#files
+.openzeppelin/.session
+
+
+
+# Ignore all node data folders
+besu/QBFT-Network/Node-*/data/
