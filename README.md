@@ -1,238 +1,153 @@
+# AidChain Blockchain
 
+AidChain Blockchain contains the blockchain and smart-contract layer for the AidChain platform. It combines a Hyperledger Besu QBFT network, smart-contract deployment tooling, and a Node/Express service layer that exposes blockchain operations to the rest of the platform.
 
+This repository is published as a clean portfolio snapshot. Project provenance is documented in [PROVENANCE.md](./PROVENANCE.md).
 
-# 🧱 AidChain Blockchain – Hyperledger Besu + QBFT  
+## What This Repository Covers
 
-A decentralized **blockchain-based infrastructure** built with **Hyperledger Besu (QBFT consensus)** to enable transparent, secure, and verifiable humanitarian aid distribution.
+- Hyperledger Besu network configuration
+- QBFT validator-node setup
+- Solidity smart contracts and deployment scripts
+- blockchain-facing HTTP routes for accounts, escrow, and transactions
+- support utilities for contract interaction and API documentation
 
----
+## Platform Position
 
-## 🚀 Project Overview  
+```text
+AidChain clients -> AidChain API -> AidChain Blockchain -> Besu QBFT network
+```
 
-AidChain forms the blockchain backbone of the **Convexity Humanitarian Aid Transfer System (CHATS)**.  
-It ensures that every on-chain aid transaction — from minting and approval to disbursement — is fully traceable, auditable, and immutable.  
+The backend API uses this service to translate business events into on-chain operations.
 
-### 🎯 Key Objectives  
-- ✅ Guarantee **transparency** in humanitarian fund distribution  
-- 🔒 Provide **immutability** and **traceability** of all transactions  
-- ⚙️ Enable **NGOs**, **Vendors**, and **Beneficiaries** to operate on a single decentralized network  
-- 💬 Integrate seamlessly with backend services through **RabbitMQ** and **Node.js**
+## Tech Stack
 
----
+- Hyperledger Besu
+- QBFT consensus
+- Solidity
+- Hardhat
+- Truffle configuration
+- Node.js / Express
+- ethers.js and Ethereum tooling
+- Docker Compose
+- Swagger / OpenAPI-related assets
 
-## 🧠 Architecture Overview  
+## Repository Layout
 
-┌────────────────────────────┐
-│        Admin Panel         │
-│      (Nuxt 3 Frontend)     │
-└────────────┬───────────────┘
-│ REST API
-┌────────────▼───────────────┐
-│       AidChain API         │
-│ (Node.js, Express, RabbitMQ│
-│   Sequelize, PostgreSQL)   │
-└────────────┬───────────────┘
-│ Queue
-┌────────────▼───────────────┐
-│     AidChain Blockchain    │
-│ (Hyperledger Besu + QBFT)  │
-│ Smart Contracts + Hardhat  │
-└────────────────────────────┘
+```text
+besu/                 local blockchain network definition
+contracts/            Solidity contracts
+migrations/           deployment migration files
+scripts/              deployment and support scripts
+src/
+  routes/
+    Account/
+    Escrow/
+    Transaction/
+    UserMgt/
+  connectWeb3/        web3 connection helpers
+  middleware/         request middleware
+  docs/               API docs assets
+config/               app and chain configuration
+artifacts/            compiled contract artifacts
+nginx/                reverse-proxy configuration
+```
 
----
+## Main Capabilities
 
-## ⚙️ Tech Stack  
+- local multi-node Besu network startup
+- token and escrow contract deployment
+- account and transaction endpoints for backend integration
+- API wrappers around smart-contract flows
+- contract artifact management for downstream consumers
 
-| Layer | Technology |
-|-------|-------------|
-| **Blockchain** | Hyperledger Besu (QBFT consensus) |
-| **Smart Contracts** | Solidity + Hardhat |
-| **Automation** | Docker + Docker Compose |
-| **Backend Interaction** | Node.js, ethers.js |
-| **Queue System** | RabbitMQ |
-| **Database Layer** | PostgreSQL (via backend) |
-| **Infrastructure** | Multi-node QBFT network |
+## Prerequisites
 
----
+- Node.js 18+ recommended
+- npm
+- Docker and Docker Compose
+- JavaScript toolchain for Hardhat/Truffle workflows
 
-## 📦 Prerequisites  
-
-Ensure the following are installed before running the project:
+## Installation
 
 ```bash
-Docker
-Docker Compose
-Node.js (>= v14)
-npm
-Git
+npm install
+```
 
+## Environment Setup
 
-⸻
+Create your own `.env` file for local execution. The published snapshot excludes runtime secrets.
 
-📁 Folder Structure
+Typical values include:
 
-AidChain_Blockchain/
-├── README.md
-├── besu/
-│   └── QBFT-Network/
-│       ├── Node-1/
-│       ├── Node-2/
-│       ├── Node-3/
-│       ├── Node-4/
-│       ├── config/
-│       │   ├── genesis.json
-│       │   └── qbftConfigFile.json
-│       ├── networkFiles/
-│       │   ├── key
-│       │   ├── key.pub
-│       │   └── static-nodes.json
-│       ├── docker-compose.yml
-│       └── start-network.sh
-├── scripts/
-│   └── deploy.js
-└── .env
-
-
-⸻
-
-🧪 Getting Started
-
-1️⃣ Clone Repository
-
-git clone https://github.com/TalhaArjumand/Aidchain_Blockchain.git
-cd Aidchain_Blockchain
-
-2️⃣ Checkout Branch
-
-git checkout chats-blockchain
-
-3️⃣ Start QBFT Network
-
-cd besu/QBFT-Network
-docker-compose up -d
-
-4️⃣ Verify Node Status
-
-docker ps
-
-To view logs:
-
-docker logs -f besu-node1
-
-Expected output:
-
-Imported #102321 / 0 tx / 0 pending
-
-
-⸻
-
-⚙️ Configuration
-
-🔧 .env File
-
-Used during smart contract deployment or API interaction:
-
-PRIVATE_KEY=0x<your-private-key>
+```bash
+PRIVATE_KEY=
 RPC_URL=http://127.0.0.1:8545
+ETHERSCAN_API_KEY=
+ADMIN_TEST=
+ADMIN_PASS_TEST=
+PORT=3000
+```
 
-🪙 genesis.json
+A sanitized `.env.example` can be used as a starting point where applicable.
 
-Defines:
-	•	chainId
-	•	QBFT parameters
-	•	Initial validator list
-	•	Account allocations
+## Run the Service
 
-⚙️ qbftConfigFile.json
+```bash
+npm run dev
+```
 
-Specifies:
-	•	Block time
-	•	Epoch length
-	•	Timeout settings
+or
 
-⸻
+```bash
+npm start
+```
 
-📄 Smart Contract Deployment
+## Start the Besu Network
 
-We use Hardhat for deploying and interacting with contracts.
+This repo includes Besu network assets and Docker compose files for local QBFT execution.
 
-# Start Besu network
+```bash
 docker-compose up -d
+```
 
-# In a separate terminal
-cd chats-blockchain
+Depending on your setup, you may also use the dedicated network files inside `besu/`.
 
-# Deploy smart contracts
+## Contract Deployment
+
+Typical Hardhat deployment flow:
+
+```bash
 npx hardhat run scripts/deploy.js --network besu
+```
 
-Example Hardhat Config:
+Adjust the network configuration to match your local or staging chain.
 
-networks: {
-  besu: {
-    url: "http://127.0.0.1:8545",
-    accounts: ["0x<private-key>"]
-  }
-}
+## Testing
 
+```bash
+npm test
+```
 
-⸻
+## API Surface
 
-🔁 Developer Workflow
+Route groups in `src/routes/` include:
 
-Git Branching Convention
+- `Account`
+- `Escrow`
+- `Transaction`
+- `UserMgt`
 
-main                  → base branch (production-ready)
-chats-blockchain      → active development branch
-feature/<name>        → feature work
-hotfix/<issue>        → bug fixes
+These routes are intended to be consumed by the backend API and internal operational flows.
 
-Workflow Commands:
+## Related Repositories
 
-git checkout -b feature/new-feature
-git add .
-git commit -m "Add new feature"
-git push origin feature/new-feature
+- `AidChainPlatform/aid-api`
+- `AidChainPlatform/aidchain-ngo`
+- `AidChainPlatform/aidchain-admin`
 
+## Notes
 
-⸻
-
-🐳 Docker Commands
-
-# Start network
-docker-compose up -d
-
-# Stop network
-docker-compose down
-
-# View logs
-docker logs -f besu-node1
-
-
-⸻
-
-Contributors Guide
-	•	Ensure .env is properly configured before running any script
-	•	Avoid committing private keys or sensitive files
-	•	Use descriptive commit messages
-	•	Run and test locally before pushing any PRs
-	•	Follow the naming conventions for branches and commits
-
-⸻
-
-📫 Contact
-
-Maintainer: Talha Arjumand
-For collaboration or queries, feel free to reach out via LinkedIn or email.
-
-⸻
-
-❤️ Credits
-
-Developed with passion by the AidChain Team
-Supervised under the FAST-NUCES Blockchain Systems Lab
-
-“Transparency is the foundation of trust.”
-— AidChain Blockchain Initiative
-=======
-
-
+- This repo contains both chain infrastructure and an application-facing blockchain wrapper.
+- The published org repository is a clean snapshot without prior git history.
+- Do not commit private keys or chain credentials.
